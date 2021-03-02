@@ -33,12 +33,12 @@ function M.find_maxsubarray(A, low, high)
 end
 
 @if_best_sum_in_left_return_it+=
-if left_sum > right_sum and left_sum > cross_sum then
+if left_sum >= right_sum and left_sum >= cross_sum then
   return left_low, left_high, left_sum
 end
 
 @if_best_sum_in_right_return_it+=
-if right_sum > left_sum and right_sum > cross_sum then
+if right_sum >= left_sum and right_sum >= cross_sum then
   return right_low, right_high, right_sum
 end
 
