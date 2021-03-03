@@ -15,14 +15,16 @@ end
 @implement+=
 function quicksort_helper(A, p, r)
   if p < r then
-    @choose_pivot_point
+    @choose_random_pivot_point
     @paritition_array_with_pivot
     @recurse_on_lower_half
     @recurse_on_upper_half
   end
 end
 
-@choose_pivot_point+=
+@choose_random_pivot_point+=
+local k = math.random(p, r)
+A[k], A[r] = A[r], A[k]
 local x = A[r]
 
 @paritition_array_with_pivot+=
@@ -53,6 +55,6 @@ quicksort_helper(A, q+1, r)
 
 @test+=
 local tab = {}
-for i=1,10 do table.insert(tab, math.random(10)) end
+for i=1,100 do table.insert(tab, math.random(100)) end
 quicksort(tab)
 print(vim.inspect(tab))
