@@ -1,5 +1,5 @@
 ##counting_sort
-@counting_sort=
+@counting_sort.lua=
 @implement
 @test
 
