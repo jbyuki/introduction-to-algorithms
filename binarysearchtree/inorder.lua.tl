@@ -1,7 +1,8 @@
 ##binary_search_tree
-@binary_search_tree=
+@binary_search_tree.lua=
 @declare
 @implement
+@create_tree
 @test
 
 @declare+=
@@ -29,7 +30,7 @@ function node:add_right(child)
   child.parent = self
 end
 
-@test+=
+@create_tree+=
 local root = node.new(6)
 root:add_left(node.new(5))
 root:add_right(node.new(7))
@@ -37,4 +38,5 @@ root.left:add_left(node.new(2))
 root.left:add_right(node.new(5))
 root.right:add_right(node.new(8))
 
+@test+=
 root:inorder_print()
