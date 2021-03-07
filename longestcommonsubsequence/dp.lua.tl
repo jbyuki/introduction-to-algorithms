@@ -11,19 +11,25 @@ local find_lcs
 @implement+=
 function find_lcs(A, B)
   local best = {}
+  local best_seq = {}
   best[0] = {}
   for j=0,#B do
-    best[0][j] = 0
+    best[0][j] = {}
   end
 
   for i=1,#A do
     best[i] = {}
-    best[i][0] = 0
+    best[i][0] = {}
     for j=1,#B do
       if B[j] ~= A[i] then
-        best[i][j] = math.max(best[i-1][j], best[i][j-1])
+        if #best[i-1][j] > #best[i][j-1] then
+          best[i][j] = best[i-1][j]
+        else
+          best[i][j] = best[i][j-1]
+        end
       else
-        best[i][j] = 1+best[i-1][j-1]
+        best[i][j] = vim.deepcopy(best[i-1][j-1])
+        vim.list_extend(best[i][j], {A[i]})
       end
     end
   end
@@ -37,4 +43,4 @@ local B = {"M", "Z", "J", "A", "W", "X", "U"}
 
 @test+=
 local lcs = find_lcs(A, B)
-print(lcs)
+print("lcs is " .. vim.inspect(lcs))
