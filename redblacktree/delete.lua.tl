@@ -202,6 +202,8 @@ for i=1,10 do
   tree:check_binary_search()
 end
 
+tree.root:inorder_print()
+
 for i=10,1,-1 do
   tree:delete(nodes[i])
   tree:check_property2()

@@ -131,7 +131,9 @@ end
 @implement+=
 function node:inorder_print()
   if self.left then self.left:inorder_print() end
-  print(self.key)
+  if self.key then
+    print(self.key)
+  end
   if self.right then self.right:inorder_print() end
 end
 
