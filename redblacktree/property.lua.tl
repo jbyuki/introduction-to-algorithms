@@ -55,5 +55,5 @@ end
 
 @check_that_number_are_sorted+=
 for i=1,#nums-1 do
-  assert(nums[i] < nums[i+1], "numbers are not sorted!")
+  assert(nums[i] <= nums[i+1], "numbers are not sorted! ")
 end

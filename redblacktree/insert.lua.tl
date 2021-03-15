@@ -72,10 +72,11 @@ else
 end
 
 @test+=
-for i=1,10 do
-  local key = math.random(1, 100)
-  tree:insert(node.new(key))
-  tree:check_property2()
-  tree:check_property4()
-  tree:check_binary_search()
-end
+-- for i=1,100 do
+  -- local key = math.random(1, 100)
+  -- tree:insert(node.new(key))
+  -- tree:check_property2()
+  -- tree:check_property4()
+  -- tree:check_binary_search()
+-- end
+-- print("OK!")

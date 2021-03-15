@@ -39,8 +39,8 @@ self:replace(self.left)
 local min = self.right:min()
 
 @put_minimum_at_top_of_subtree+=
-if min.left then
-  min:replace(min.left)
+if min.right then
+  min:replace(min.right)
 end
 min:add_right(self.right)
 
