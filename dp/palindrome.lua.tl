@@ -46,7 +46,7 @@ if #best[i-1][j] > #local_best then
 end
 
 @palindrome_by_adjoing_left_and_right+=
-if j < #array-(i-1) then
+if j <= #array-(i-1) then
   if array[j] == array[j+(i-1)] then
     if #best[i-2][j+1]+2 > #local_best then
       local_best = { array[j] }
@@ -68,7 +68,7 @@ function toCharArray(str)
 end
 
 @test+=
-local input = "character"
+local input = "bbbab"
 print("input: " .. input)
 local best = find_longest_palindrome(toCharArray(input))
 print("longest subsequence palindrome: " .. table.concat(best, ''))
