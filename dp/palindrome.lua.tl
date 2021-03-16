@@ -68,7 +68,8 @@ function toCharArray(str)
 end
 
 @test+=
-local input = "bbbab"
+local input = "abcdeca"
 print("input: " .. input)
 local best = find_longest_palindrome(toCharArray(input))
 print("longest subsequence palindrome: " .. table.concat(best, ''))
+print("longest subsequence palindrome length: " .. #best)
