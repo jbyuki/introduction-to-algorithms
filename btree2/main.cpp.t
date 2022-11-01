@@ -9,12 +9,12 @@
 auto main() -> int
 {
 	@start_timer
-	for(int i=0; i<1000; ++i) {
-		@create_tree
-		@test_tree
-		// @print_tree
-		@destroy_tree
-	}
+	// for(int i=0; i<1000; ++i) {
+	@create_tree
+	@test_tree
+	// @print_tree
+	@destroy_tree
+	// }
 	@stop_timer
 	@show_elapsed
 	return 0;
@@ -102,30 +102,6 @@ float elapsed = (float)delta.count();
 @show_elapsed+=
 std::cout << "Elapsed: " << elapsed*1000.f << std::endl;
 
-@declare+=
-auto tree_search(bptree* tree, int index, int* i) -> bpnode*;
-
-@define+=
-auto tree_search(bptree* tree, int index, int* i) -> bpnode*
-{
-	return node_search(tree->root, index, i);
-}
-
-@declare+=
-auto node_search(bpnode* node, int index, int* i) -> bpnode*
-{
-	if(node->leaf) {
-		*i = index;
-		return node;
-	} else {
-		int j=0;
-		while(index >= node->counts[j] && j < node->n) {
-			index -= node->counts[j];
-			j++;
-		}
-		return node_search(node->children[j], index, i);
-	}
-}
 
 @define+=
 auto tree_insert(bptree* tree, int index, int value) -> void
@@ -208,6 +184,7 @@ if(child->leaf) {
 else {
 	for(int i=0; i<T; ++i) {
 		right->children[i] = child->children[i+T];
+		right->children[i]->parent = right;
 	}
 
 	right_count = 0;
@@ -261,6 +238,7 @@ new_root->leaf = false;
 new_root->children[0] = tree->root;
 new_root->counts[0] = tree->total;
 new_root->n = 1;
+new_root->parent = NULL;
 tree->root->parent = new_root;
 
 tree->root = new_root;
@@ -286,9 +264,13 @@ auto print_node(bpnode* node, int indent) -> void
 {
 	if(node->leaf) {
 		for(int j=0; j<indent; ++j) {
-			std::cout << " ";
+			std::cout << ".";
 		}
-		std::cout << "-" << std::endl;
+		std::cout << "[" << node << "]" << std::endl;
+		for(int j=0; j<indent; ++j) {
+			std::cout << ".";
+		}
+		std::cout << "parent [" << node->parent << "]" << std::endl;
 		for(int i=0; i<node->n; ++i) {
 			for(int j=0; j<indent; ++j) {
 				std::cout << " ";
@@ -296,6 +278,15 @@ auto print_node(bpnode* node, int indent) -> void
 			std::cout << node->keys[i] << std::endl;
 		}
 	} else {
+		for(int j=0; j<indent; ++j) {
+			std::cout << ".";
+		}
+		std::cout << "[" << node << "]" << std::endl;
+		for(int j=0; j<indent; ++j) {
+			std::cout << ".";
+		}
+		std::cout << "parent [" << node->parent << "]" << std::endl;
+
 		for(int i=0; i<node->n; ++i) {
 			print_node(node->children[i], indent+1);
 		}
@@ -440,6 +431,7 @@ if(right->leaf) {
 	for(int i=0; i<right->n; ++i) {
 		left->counts[i+T] = right->counts[i];
 		left->children[i+T] = right->children[i];
+		left->children[i+T]->parent = left;
 		right_count += right->counts[i];
 	}
 }
@@ -484,11 +476,94 @@ if(node->n == 1) {
 	return;
 }
 
+@declare+=
+auto tree_lookup(bptree* tree, int index) -> int;
+
+@define+=
+auto tree_lookup(bptree* tree, int index) -> int
+{
+	return node_lookup(tree->root, index);
+}
+
+@declare+=
+auto node_lookup(bpnode* node, int index) -> int;
+
+@define+=
+auto node_lookup(bpnode* node, int index) -> int
+{
+	if(node->leaf) {
+		return node->keys[index];
+	} else {
+		int j=0;
+		while(index >= node->counts[j] && j < node->n) {
+			index -= node->counts[j];
+			j++;
+		}
+		return node_lookup(node->children[j], index);
+	}
+}
+
+
+@declare+=
+auto tree_reverse_lookup(bpnode* node, int offset) -> int;
+
+@define+=
+auto tree_reverse_lookup(bpnode* node, int offset) -> int
+{
+	if(!node->parent) {
+		return offset;
+	}
+
+	else {
+		bpnode* parent = node->parent;
+		for(int i=0; i<parent->n; ++i) {
+			if(parent->children[i] == node) {
+				break;
+			}
+			offset += parent->counts[i];
+		}
+		return tree_reverse_lookup(parent, offset);
+	}
+}
+
+
+@declare+=
+auto tree_lookup(bptree* tree, int index, int* offset) -> bpnode*;
+
+@define+=
+auto tree_lookup(bptree* tree, int index, int* offset) -> bpnode*
+{
+	return node_lookup(tree->root, index, offset);
+}
+
+@declare+=
+auto node_lookup(bpnode* node, int index, int* offset) -> bpnode*;
+
+@define+=
+auto node_lookup(bpnode* node, int index, int* offset) -> bpnode*
+{
+	if(node->leaf) {
+		*offset = index;
+		return node;
+	} else {
+		int j=0;
+		while(index >= node->counts[j] && j < node->n) {
+			index -= node->counts[j];
+			j++;
+		}
+		return node_lookup(node->children[j], index, offset);
+	}
+}
+
 @test_tree+=
-for(int i=0; i<1000; ++i) {
+for(int i=0; i<10; ++i) {
 	tree_insert(tree, 0, i);
 }
 
-for(int i=0; i<1000; ++i) {
-	tree_delete(tree, 0);
+print_tree(tree);
+
+for(int i=0; i<10; ++i) {
+	int offset;
+	bpnode* node = tree_lookup(tree, i, &offset);
+	std::cout << tree_reverse_lookup(node, offset) << std::endl;
 }

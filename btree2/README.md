@@ -8,7 +8,7 @@ data structure where the following operations are supported:
 * insert at [i] : O(log n)
 * delete at [i] : O(log n)
 * lookup at [i] : O(log n)
-* reverse lookup of i: O(log n)   [not implemented]
+* reverse lookup of i: O(log n)
 
 
 Benchmarks
