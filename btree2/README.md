@@ -16,6 +16,7 @@ Benchmarks
 
 The performances are about the same between btree/ and btree2/, but
 the btree2/ implementation is slighter simpler ( 500 LOC vs 600 LOC ).
+The advantage of btree/ is less memory usage because it stores values in internal nodes but comes at additionnal code complexity.
 
 On my machine the benchmarks runs in ~70 ms. The benchmark code is: 
 
